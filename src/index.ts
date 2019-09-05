@@ -20,9 +20,7 @@ const getProgress = (img, progress) =>
 
 const app = express();
 const sendMessages = async ({ phone, message }, country = 'philippines') => {
-  const browser = await puppeteer.launch({
-    headless: false
-  });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(`http://www.afreesms.com/intl/${country}`, {
     waitUntil: 'networkidle2'
