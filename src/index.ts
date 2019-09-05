@@ -1,5 +1,5 @@
 import express from 'express';
-import api from './send';
+import api from '../api/send';
 
 const app = express();
 
