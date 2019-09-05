@@ -1,5 +1,6 @@
 import Tesseract from 'tesseract.js';
-import chromium from 'chrome-aws-lambda';
+// import chromium from 'chrome-aws-lambda';
+import puppeteer from 'puppeteer';
 
 const { TesseractWorker }: any = Tesseract;
 const worker = new TesseractWorker();
@@ -18,12 +19,17 @@ export const sendMessages = async (
   { phone, message },
   country = 'philippines'
 ) => {
-  console.log(chromium.executablePath);
-  const browser = await chromium.puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless
+  // const options = {
+  //   args: chromium.args,
+  //   defaultViewport: chromium.defaultViewport,
+  //   executablePath: await chromium.executablePath,
+  //   headless: chromium.headless
+  // };
+  // console.log(options);
+  // const browser = await chromium.puppeteer.launch(options);
+  const browser = await puppeteer.launch({
+    executablePath:
+      './node_modules/puppeteer/.local-chromium/win64-674921/chrome-win/chrome.exe'
   });
   const page = await browser.newPage();
   await page.goto(`http://www.afreesms.com/intl/${country}`, {

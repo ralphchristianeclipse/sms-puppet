@@ -5,7 +5,7 @@ const app = express();
 
 app.get('/send', api);
 
-const { PORT = 5000 } = process.env;
+const { PORT = 3000 } = process.env;
 
 const startServer = () => {
   app.listen(PORT, async () => {
