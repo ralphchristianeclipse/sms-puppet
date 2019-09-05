@@ -1,3 +1,12 @@
 {
-  "name": "sms-puppet"
+  "name": "sms-puppet",
+  "env": {
+    "IS_NOW": "true"
+  },
+  "builds": [
+    {
+      "src": "./src/**/*.ts",
+      "use": "@now/node@canary"
+    }
+  ]
 }
