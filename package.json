@@ -15,7 +15,8 @@
   "devDependencies": {
     "@types/express": "^4.17.1",
     "@types/puppeteer": "^1.19.1",
-    "@types/tesseract.js": "^0.0.2"
+    "@types/tesseract.js": "^0.0.2",
+    "puppeteer": "^1.19.0"
   },
   "engines": {
     "node": "8.10.x"

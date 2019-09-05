@@ -2,7 +2,7 @@
   "name": "sms-puppet",
   "builds": [
     {
-      "src": "./api/send.ts",
+      "src": "/api/send.ts",
       "use": "@now/node",
       "config": { "maxLambdaSize": "512mb" }
     }
