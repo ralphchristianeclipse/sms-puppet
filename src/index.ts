@@ -49,7 +49,10 @@ const sendMessages = async ({ phone, message }) => {
   });
   const text: string = (await getProgress(url, console.log)) as string;
   const captchaText = text.slice(0, 6);
-  console.log(captchaText);
+  if (Number.isNaN(+captchaText))
+    throw new Error(
+      `Failed to send message to phone number: ${phone} due to captcha error ${captchaText}`
+    );
   const [, , mobileInputId, , captchaInputId] = ids;
   const [messageInputId] = idsT;
   const mobileNumberSelector = `[id="${mobileInputId}"]`;
