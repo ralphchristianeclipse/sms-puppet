@@ -8,5 +8,6 @@
       "src": "./src/**/*.ts",
       "use": "@now/node@canary"
     }
-  ]
+  ],
+  "routes": [{ "src": "/api/(.*)", "dest": "./src/index.ts" }]
 }
