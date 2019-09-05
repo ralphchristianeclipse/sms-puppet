@@ -1,9 +1,3 @@
 {
-  "name": "sms-puppet",
-  "builds": [
-    {
-      "src": "./src/index.ts",
-      "use": "@now/node-server"
-    }
-  ]
+  "name": "sms-puppet"
 }
