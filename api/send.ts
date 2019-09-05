@@ -1,11 +1,7 @@
-import puppeteer, { Browser } from 'puppeteer';
-import express from 'express';
+import puppeteer from 'puppeteer';
 import Tesseract from 'tesseract.js';
-import { resolve } from 'dns';
-
 const { TesseractWorker }: any = Tesseract;
 const worker = new TesseractWorker();
-
 const getProgress = (img, progress) =>
   new Promise((resolve, reject) =>
     worker
@@ -17,32 +13,29 @@ const getProgress = (img, progress) =>
       })
       .catch(reject)
   );
-
-const app = express();
-const sendMessages = async ({ phone, message }, country = 'philippines') => {
+export const sendMessages = async (
+  { phone, message },
+  country = 'philippines'
+) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(`http://www.afreesms.com/intl/${country}`, {
     waitUntil: 'networkidle2'
   });
   const navigationPromise = page.waitForNavigation();
-
   const [ids, idsT]: any = await page.evaluate(async () => {
     const inputs = Array.from(document.querySelectorAll('input'));
     const textareas = Array.from(document.querySelectorAll('textarea'));
     const ids = inputs.map(({ id }) => id);
     const idsT = textareas.map(({ id }) => id);
-
     return [ids, idsT];
   });
-
   const evaluateCaptchaText = () =>
     page.evaluate(() => {
       const getDataUrlCaptcha = async () => {
         const getImageEl = () =>
           new Promise((resolve, reject) => {
             const captchaImageEl: any = document.querySelector('#captcha');
-
             const reloadEl: any = document.querySelector(
               "img[alt='Reload the image']"
             );
@@ -97,7 +90,7 @@ const sendMessages = async ({ phone, message }, country = 'philippines') => {
   return captchaText;
 };
 
-app.get('/send', async (req, res) => {
+export default async (req, res) => {
   const { phone, message } = req.query;
   try {
     console.log({ phone, message });
@@ -106,14 +99,4 @@ app.get('/send', async (req, res) => {
   } catch (e) {
     res.send({ error: e.message });
   }
-});
-const { PORT = 5000 } = process.env;
-
-const startServer = () => {
-  app.listen(PORT, async () => {
-    console.log(`Server started at http://localhost:${PORT}`);
-  });
 };
-
-startServer();
-process.on('uncaughtException', console.log);
