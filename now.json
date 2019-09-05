@@ -1,13 +1,9 @@
 {
   "name": "sms-puppet",
-  "env": {
-    "IS_NOW": "true"
-  },
   "builds": [
     {
-      "src": "./src/**/*.ts",
-      "use": "@now/node@canary"
+      "src": "./src/index.ts",
+      "use": "@now/node-server"
     }
-  ],
-  "routes": [{ "src": "/api/(.*)", "dest": "./src/index.ts" }]
+  ]
 }
