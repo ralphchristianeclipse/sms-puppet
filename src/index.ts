@@ -1,35 +1,70 @@
 import puppeteer, { Browser } from 'puppeteer';
 import express from 'express';
-import dcipher from 'dcipher';
-const hashDetect = require('hash-detector');
-let browser: Browser;
+import Tesseract from 'tesseract.js';
+import { resolve } from 'dns';
+
+const { TesseractWorker } = Tesseract;
+const worker = new TesseractWorker();
+
+const getProgress = (img, progress) =>
+  new Promise((resolve, reject) =>
+    worker
+      .recognize(img)
+      .progress(progress)
+      .then(({ text }) => {
+        worker.terminate();
+        resolve(text);
+      })
+      .catch(reject)
+  );
+
 const app = express();
 const sendMessages = async ({ phone, message }) => {
-  const [page] = await browser.pages();
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
   await page.goto('http://www.afreesms.com/intl/philippines', {
     waitUntil: 'networkidle2'
   });
-
-  const [ids, idsT] = await page.evaluate(() => {
+  const navigationPromise = page.waitForNavigation();
+  const [ids, idsT, url]: any = await page.evaluate(() => {
     const inputs = Array.from(document.querySelectorAll('input'));
     const textareas = Array.from(document.querySelectorAll('textarea'));
     const ids = inputs.map(({ id }) => id);
     const idsT = textareas.map(({ id }) => id);
-    return [ids, idsT];
+    const captchaImageEl = document.querySelector('#captcha');
+    const getDataUrl = img => {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      // If the image is not png, the format
+      // must be specified here
+      return canvas.toDataURL();
+    };
+    const url = getDataUrl(captchaImageEl);
+    return [ids, idsT, url];
   });
-  console.log(ids, idsT);
-  const [, , mobileInputId] = ids;
+  const text: string = (await getProgress(url, console.log)) as string;
+  const captchaText = text.slice(0, 6);
+  console.log(captchaText);
+  const [, , mobileInputId, , captchaInputId] = ids;
   const [messageInputId] = idsT;
-  console.log(mobileInputId);
   const mobileNumberSelector = `[id="${mobileInputId}"]`;
   const messageSelector = `[id="${messageInputId}"]`;
+  const captchaSelector = `[id="${captchaInputId}"]`;
   await page.waitForSelector(mobileNumberSelector);
   await page.type(mobileNumberSelector, phone);
   await page.waitForSelector(messageSelector);
   await page.type(messageSelector, message);
-  await page.waitForSelector('submit');
-  await page.click('submit');
-  // await browser.close();
+  await page.waitForSelector(captchaSelector);
+  await page.type(captchaSelector, captchaText);
+  await page.waitForSelector('table #submit');
+  await page.click('table #submit');
+  await navigationPromise;
+  await browser.close();
   return 'test';
 };
 
@@ -45,16 +80,8 @@ const { PORT = 5000 } = process.env;
 const startServer = () => {
   app.listen(PORT, async () => {
     console.log(`Server started at http://localhost:${PORT}`);
-    console.log(await hashDetect('97565dfc7ce34b9b8659558d2d6ca6ed'));
-    console.log(await dcipher('97565dfc7ce34b9b8659558d2d6ca6ed'));
-    browser = await puppeteer.launch({
-      headless: false
-    });
   });
 };
 
 startServer();
 process.on('uncaughtException', console.log);
-process.on('beforeExit', async () => {
-  if (browser) await browser.close();
-});

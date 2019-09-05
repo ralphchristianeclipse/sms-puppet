@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "ts-node-dev src"
+  },
   "dependencies": {
-    "dcipher": "^1.1.2",
     "express": "^4.17.1",
-    "puppeteer": "^1.19.0"
+    "puppeteer": "^1.19.0",
+    "tesseract.js": "^2.0.0-alpha.15"
   },
   "devDependencies": {
     "@types/express": "^4.17.1",
-    "@types/puppeteer": "^1.19.1"
+    "@types/puppeteer": "^1.19.1",
+    "@types/tesseract.js": "^0.0.2"
   }
 }
