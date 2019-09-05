@@ -1,5 +1,7 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import Tesseract from 'tesseract.js';
+import chrome from 'chrome-aws-lambda';
+
 const { TesseractWorker }: any = Tesseract;
 const worker = new TesseractWorker();
 const getProgress = (img, progress) =>
@@ -17,7 +19,11 @@ export const sendMessages = async (
   { phone, message },
   country = 'philippines'
 ) => {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: chrome.args,
+    executablePath: await chrome.executablePath,
+    headless: chrome.headless
+  });
   const page = await browser.newPage();
   await page.goto(`http://www.afreesms.com/intl/${country}`, {
     waitUntil: 'networkidle2'
@@ -95,7 +101,7 @@ export default async (req, res) => {
   try {
     console.log({ phone, message });
     const result = await sendMessages({ phone, message });
-    res.send(result);
+    res.send({ data: result });
   } catch (e) {
     res.send({ error: e.message });
   }

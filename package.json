@@ -7,8 +7,10 @@
     "dev": "ts-node-dev api/dev"
   },
   "dependencies": {
+    "chrome-aws-lambda": "^1.19.0",
     "express": "^4.17.1",
     "puppeteer": "^1.19.0",
+    "puppeteer-core": "^1.19.0",
     "tesseract.js": "^2.0.0-alpha.15"
   },
   "devDependencies": {
