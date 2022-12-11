@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "chrome-aws-lambda": "^1.19.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "puppeteer-core": "^1.19.0",
     "tesseract.js": "^2.0.0-alpha.15"
   },
